@@ -1,44 +1,39 @@
 using System;
-using System.Security.Policy;
-using Expansions.Missions.Tests;
-
+using KerbalConstructionTime;
 namespace RP1RoutineOperations
 {
 	public class MissionRecorder : VesselModule
 	{
-		public bool IsRecording { get; set; }
-		public bool Subscribed { get; set; }
-		
-		public string LaunchedVesselPath { get; private set; }
+		public bool IsRecording { get; set; } = false;
+		public bool Subscribed { get; set; } = false;
+		public MissionData Data { get; set; } = null;
 
-		public void OnStart()
+		protected override void OnStart()
 		{
-			
+			base.OnStart();
+			MissionRecordingValidator.Instance.AddMissionRecorderUnique(Data.Id, this);
 		}
 
-		private void OnUpdate()
+		private void Update()
 		{
 			RecordingCheck();
-
-			if (IsRecording)
-			{
-				
-			}
 		}
 
 		private void OnDestroy()
 		{
 			UnsubscribeFromEvents();
+			MissionRecordingValidator.Instance.RemoveMissionRecorder(Data.Id);
 		}
 
 		private void RecordingCheck()
 		{
 			// check if the vessel is in prelaunch or in any other valid situation
 
-			if (vessel.isActiveVessel && vessel.situation == Vessel.Situations.PRELAUNCH)
+			if (!IsRecording && vessel.isActiveVessel && vessel.situation == Vessel.Situations.PRELAUNCH)
 			{
 				IsRecording = true;
 				SubscribeToEvents();
+				StoreVessel(KCTGameStates.LaunchedVessel);
 			}
 		}
 
@@ -58,7 +53,7 @@ namespace RP1RoutineOperations
 
 			GameEvents.onStageSeparation.Remove(OnStaging);
 			GameEvents.onDockingComplete.Remove(OnDocking);
-			
+
 			Subscribed = false;
 		}
 
@@ -70,6 +65,11 @@ namespace RP1RoutineOperations
 		private void OnDocking(GameEvents.FromToAction<Part, Part> action)
 		{
 			throw new NotImplementedException();
+		}
+
+		private void StoreVessel(BuildListVessel blv)
+		{
+			Data = MissionData.Create(blv);
 		}
 	}
 }

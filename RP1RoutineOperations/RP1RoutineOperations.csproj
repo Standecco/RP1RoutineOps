@@ -55,12 +55,13 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
+        <Compile Include="MissionData.cs"/>
         <Compile Include="OperationProfile.cs" />
         <Compile Include="MissionRecorder.cs" />
         <Compile Include="MissionRecordingValidator.cs" />
         <Compile Include="RoutineOpsManager.cs" />
         <Compile Include="Properties\AssemblyInfo.cs" />
-        <Compile Include="Utilities.cs" />
+        <Compile Include="Utils.cs"/>
     </ItemGroup>
     <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
     <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
